@@ -8,107 +8,107 @@
 
 </div>
 
-## Overview
+## Обзор
 
-BarberManager is a containerized barber shop management system web application.
+BarberManager — это контейнеризованная система управления парикмахерской в виде веб-приложения.
 
-It provides an appointment booking system for clients, availability management for barbers, and automated reminders.
+Она предоставляет систему бронирования записей для клиентов, управление доступностью для барберов и автоматические напоминания.
 
-The tech stack uses **React** (Vite) frontend, **Django** backend, and relies on **Docker Compose** for easy cross-platform development & deployment.
+Технологический стек использует **React** (Vite) фронтенд, **Django** бэкенд и полагается на **Docker Compose** для удобной кроссплатформенной разработки и развертывания.
 
-## Table of Contents
+## Содержание
 
-- [Overview](#overview)
-- [Table of Contents](#table-of-contents)
-- [Features](#features)
-- [Architecture](#architecture)
-- [API Documentation](#api-documentation)
-- [Live Deployment](#live-deployment)
-- [Quickstart](#quickstart)
-  - [Requirements](#requirements)
-  - [Development Workflow](#development-workflow)
-    - [Clone the repository](#clone-the-repository)
-    - [Build and launch all containers](#build-and-launch-all-containers)
-    - [(Optional) Reset dev environment](#optional-reset-dev-environment)
-- [Development Guide](#development-guide)
-  - [Backend (Django)](#backend-django)
-    - [Configuration](#configuration)
-    - [Dependencies](#dependencies)
-    - [Migrations](#migrations)
-    - [SuperUser](#superuser)
-    - [Run tests](#run-tests)
-    - [Model diagram](#model-diagram)
-  - [Frontend (React + Vite)](#frontend-react--vite)
-    - [Dependencies](#dependencies-1)
-    - [Run tests](#run-tests-1)
-- [Production Workflow](#production-workflow)
-  - [Deployment](#deployment)
-    - [CI/CD Workflow Overview](#cicd-workflow-overview)
+- [Обзор](#обзор)
+- [Содержание](#содержание)
+- [Возможности](#возможности)
+- [Архитектура](#архитектура)
+- [Документация API](#документация-api)
+- [Продакшн развертывание](#продакшн-развертывание)
+- [Быстрый старт](#быстрый-старт)
+  - [Требования](#требования)
+  - [Рабочий процесс разработки](#рабочий-процесс-разработки)
+    - [Клонирование репозитория](#клонирование-репозитория)
+    - [Сборка и запуск всех контейнеров](#сборка-и-запуск-всех-контейнеров)
+    - [(Опционально) Сброс среды разработки](#опционально-сброс-среды-разработки)
+- [Руководство по разработке](#руководство-по-разработке)
+  - [Бэкенд (Django)](#бэкенд-django)
+    - [Конфигурация](#конфигурация)
+    - [Зависимости](#зависимости)
+    - [Миграции](#миграции)
+    - [Суперпользователь](#суперпользователь)
+    - [Запуск тестов](#запуск-тестов)
+    - [Диаграмма моделей](#диаграмма-моделей)
+  - [Фронтенд (React + Vite)](#фронтенд-react--vite)
+    - [Зависимости](#зависимости-1)
+    - [Запуск тестов](#запуск-тестов-1)
+- [Продакшн рабочий процесс](#продакшн-рабочий-процесс)
+  - [Развертывание](#развертывание)
+    - [Обзор CI/CD процесса](#обзор-cicd-процесса)
 
-## Features
+## Возможности
 
-- 💇‍♂️ **Barber Availability**: Admins define 1-hour slot schedules for each barber.
-- 📅 **Client Appointments**: Clients can book available slots with their chosen barber & service(s).
-- ⏰ **Reminders & Automation**: Email reminders and automatic appointment status updates via Celery tasks.
-- 💬 **Client Reviews**: Only permitted after completed appointments; one per client-barber pair.
-- 📊 **Dashboard Statistics**: See business insights & feedback.
-- 🐳 **Portable Development**: Containerized via Docker and VSCode Dev Containers for zero-conf dev setup.
-- ♾️ **DevOps & CI/CD**: GitHub Actions automate testing, linting, and deployment.
+- 💇‍♂️ **Доступность барбера**: Администраторы определяют расписание часовых слотов для каждого барбера.
+- 📅 **Записи клиентов**: Клиенты могут бронировать доступные слоты с выбранным барбером и услугой(ами).
+- ⏰ **Напоминания и автоматизация**: Email напоминания и автоматическое обновление статуса записей через задачи Celery.
+- 💬 **Отзывы клиентов**: Разрешены только после завершенных записей; один на пару клиент-барбер.
+- 📊 **Статистика панели управления**: Просмотр бизнес-аналитики и обратной связи.
+- 🐳 **Портативная разработка**: Контейнеризация через Docker и VSCode Dev Containers для настройки разработки без конфигурации.
+- ♾️ **DevOps и CI/CD**: GitHub Actions автоматизирует тестирование, линтинг и развертывание.
 
-## Architecture
+## Архитектура
 
 ```mermaid
 flowchart TD
-    US([User <br> Browser/Mobile])
+    US([Пользователь <br> Браузер/Мобильное])
 
-    RP[Reverse Proxy: Nginx]
+    RP[Обратный прокси: Nginx]
 
-    subgraph FrontendInfra[Frontend Infrastructure]
-      subgraph frontend[Container: 'frontend']
-        SF[Server: Nginx]
-        BL[Builder: Vite]
-        FE[Frontend: React SPA]
+    subgraph FrontendInfra[Инфраструктура фронтенда]
+      subgraph frontend[Контейнер: 'frontend']
+        SF[Сервер: Nginx]
+        BL[Сборщик: Vite]
+        FE[Фронтенд: React SPA]
       end
     end
 
-    subgraph BackendInfra[Backend Infrastructure]
-      subgraph backend[Container: 'backend']
+    subgraph BackendInfra[Инфраструктура бэкенда]
+      subgraph backend[Контейнер: 'backend']
         SB[WSGI: Gunicorn]
-        BE[Backend: Django REST API]
+        BE[Бэкенд: Django REST API]
       end
 
-      subgraph celery[Container: 'celery']
-          CW[[Worker: Celery]]
+      subgraph celery[Контейнер: 'celery']
+          CW[[Воркер: Celery]]
       end
 
-      subgraph celery-beat[Container: 'celery-beat']
+      subgraph celery-beat[Контейнер: 'celery-beat']
           CB[[Beat: Celery]]
       end
 
-      subgraph db[Container: 'db']
-        PG[(Datatbase: Postgres)]
+      subgraph db[Контейнер: 'db']
+        PG[(База данных: Postgres)]
       end
 
-      subgraph redis[Container: 'redis']
-        RD[(Broker: Redis)]
+      subgraph redis[Контейнер: 'redis']
+        RD[(Брокер: Redis)]
       end
     end
 
-    %% User
+    %% Пользователь
     US -- HTTPS --> RP
-    RP -- Routes --> SF
-    RP -- Routes --> SB
+    RP -- Маршруты --> SF
+    RP -- Маршруты --> SB
 
-    %% Frontend Infrastructutre
-    SF -- Serves --> BL
-    BL -- Builds --> FE
+    %% Инфраструктура фронтенда
+    SF -- Обслуживает --> BL
+    BL -- Собирает --> FE
 
-    %% Backend Infrastructutre
-    SB -- Serves --> BE
-    BE -- ORM Access --> PG
-    CW -- ORM Access (for task logic) --> PG
-    CW -- Pulls tasks --> RD
-    CB -- Enqueues tasks --> RD
+    %% Инфраструктура бэкенда
+    SB -- Обслуживает --> BE
+    BE -- Доступ ORM --> PG
+    CW -- Доступ ORM (для логики задач) --> PG
+    CW -- Извлекает задачи --> RD
+    CB -- Ставит задачи в очередь --> RD
     BE .-> CW
     BE .-> CB
 
@@ -135,131 +135,131 @@ flowchart TD
     style CB fill:#37814A
 ```
 
-## API Documentation
+## Документация API
 
-BarberManager offers extensive, interactive API documentation using **Swagger UI**.  
-You can explore all backend endpoints, models, request/response formats, and try out live requests directly in your browser.
+BarberManager предлагает обширную интерактивную документацию API с использованием **Swagger UI**.  
+Вы можете изучить все эндпоинты бэкенда, модели, форматы запросов/ответов и попробовать живые запросы прямо в браузере.
 
-➡️ **[View the API Documentation here.](https://barbermanager.creepymemes.com/api/)**  
-Or click the green "Swagger UI" badge at the top of this README.
+➡️ **[Посмотрите документацию API здесь.](https://barbermanager.creepymemes.com/api/)**  
+Или нажмите на зеленый бейдж "Swagger UI" в верхней части этого README.
 
-Typical API documentation features:
+Типичные возможности документации API:
 
-- **Visual interface** for exploring all available endpoints and methods.
-- **Live "Try it Out"** feature for authenticating and testing API calls.
-- **Model schemas** and required/optional field details for each operation.
+- **Визуальный интерфейс** для изучения всех доступных эндпоинтов и методов.
+- **Живая функция "Try it Out"** для аутентификации и тестирования API вызовов.
+- **Схемы моделей** и детали обязательных/опциональных полей для каждой операции.
 
-This documentation is always up-to-date with the deployed backend and is a helpful resource for frontend developers, integrators, and testers.
+Эта документация всегда актуальна с развернутым бэкендом и является полезным ресурсом для фронтенд разработчиков, интеграторов и тестировщиков.
 
-## Live Deployment
+## Продакшн развертывание
 
-You can try out BarberManager yourself on our live, production website!
+Вы можете попробовать BarberManager самостоятельно на нашем живом продакшн сайте!
 
-➡️ **[Open the Live Website](https://barbermanager.creepymemes.com/)**  
-Or click the orange "BarberManager" badge at the top of this README.
+➡️ **[Открыть живой сайт](https://barbermanager.creepymemes.com/)**  
+Или нажмите на оранжевый бейдж "BarberManager" в верхней части этого README.
 
-The live deployment features:
+Продакшн развертывание включает:
 
-- The latest available version, always kept up to date through automated CI/CD.
-- Full access to the web app's core features as described in this documentation.
-- A real working environment for testing, demos, or exploring as a developer, admin, or client.
+- Последнюю доступную версию, всегда поддерживаемую в актуальном состоянии через автоматизированный CI/CD.
+- Полный доступ к основным возможностям веб-приложения, описанным в данной документации.
+- Реальную рабочую среду для тестирования, демонстраций или изучения в качестве разработчика, администратора или клиента.
 
-## Quickstart
+## Быстрый старт
 
-### Requirements
+### Требования
 
 - [Docker](https://docs.docker.com/engine/install/)
 - [Docker Compose](https://docs.docker.com/compose/install/)
 - [VSCode](https://code.visualstudio.com/) (+ [Dev Containers Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers))
 
-### Development Workflow
+### Рабочий процесс разработки
 
-This section is about the development workflow in programming and testing the application on local machine.
+Этот раздел о рабочем процессе разработки в программировании и тестировании приложения на локальной машине.
 
 > [!TIP]
-> If you want to run **VSCode** inside the backend container.
-> When you open the project `backend` or `frontend` foldlers in **VSCode**,
-> it shoullt automaticaly detect the `.devcontainer` configurations.
+> Если вы хотите запустить **VSCode** внутри контейнера бэкенда.
+> Когда вы откроете папки проекта `backend` или `frontend` в **VSCode**,
+> он должен автоматически обнаружить конфигурации `.devcontainer`.
 >
-> If it doesn't detect it or you ignore the notification you can:
-> Open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on macOS).
-> Select `Remote-Containers: Reopen in Container`.
+> Если он не обнаружит их или вы проигнорируете уведомление, вы можете:
+> Открыть палитру команд (`Ctrl+Shift+P` или `Cmd+Shift+P` на macOS).
+> Выбрать `Remote-Containers: Reopen in Container`.
 
-#### Clone the repository
+#### Клонирование репозитория
 
-If the repository is public:
+Если репозиторий публичный:
 
 ```bash
 git clone https://github.com/CreepyMemes/barbermanager.git
 cd barbermanager/
 ```
 
-If the repository is private:
+Если репозиторий приватный:
 
 > [!IMPORTANT]
-> Change **TOKEN** to your github token
+> Замените **TOKEN** на ваш github токен
 
 ```bash
 git clone https://CreepyMemes:TOKEN@github.com/CreepyMemes/barbermanager.git
 cd barbermanager
 ```
 
-#### Build and launch all containers
+#### Сборка и запуск всех контейнеров
 
 ```bash
 docker compose -f docker-compose.dev.yml --env-file .env.dev up --build
 ```
 
-- Frontend: [http://localhost:3000](http://localhost:3000)
-- Backend: [http://localhost:8000](http://localhost:8000)
+- Фронтенд: [http://localhost:3000](http://localhost:3000)
+- Бэкенд: [http://localhost:8000](http://localhost:8000)
 
-#### (Optional) Reset dev environment
+#### (Опционально) Сброс среды разработки
 
 ```bash
 docker compose -f docker-compose.dev.yml down --volumes --remove-orphans
 ```
 
-## Development Guide
+## Руководство по разработке
 
-### Backend (Django)
+### Бэкенд (Django)
 
-The Django dev server reloads automatically on code changes.
+Django dev сервер автоматически перезагружается при изменении кода.
 
 > [!IMPORTANT]
-> Run the following commands _inside_ the container.
-> by running the following command:
+> Выполните следующие команды _внутри_ контейнера.
+> запустив следующую команду:
 >
 > ```bash
 > docker compose -f docker-compose.dev.yml --env-file .env.dev exec -it backend sh
 > ```
 
-#### Configuration
+#### Конфигурация
 
-Create a new `.env` file in root directory, and enter your credentials there, follow the example at `.env.example`:
+Создайте новый файл `.env` в корневой директории и введите ваши учетные данные, следуя примеру в `.env.example`:
 
 ```sh
-# Django config
+# Django конфигурация
 SECRET_KEY=your-super-secret-key-here
 DJANGO_ALLOWED_HOSTS=*
-DJANGO_SETTINGS_MODULE=config.settings.dev # change .dev or .prod
+DJANGO_SETTINGS_MODULE=config.settings.dev # измените .dev или .prod
 
-# Database config
+# Конфигурация базы данных
 POSTGRES_HOST=db
 POSTGRES_PORT=5432
 POSTGRES_DB=mydb
 POSTGRES_USER=myuser
 POSTGRES_PASSWORD=mypassword
 
-# Email config
+# Конфигурация email
 EMAIL_HOST='smtp.server.com'
 EMAIL_PORT=587
 EMAIL_HOST_USER='your.stmp@email.com'
 EMAIL_HOST_PASSWORD='your stmp pass here'
 ```
 
-#### Dependencies
+#### Зависимости
 
-To install new dependencies, for either base, prod or dev:
+Для установки новых зависимостей, для базовых, продакшн или dev:
 
 ```bash
 pip install <package>
@@ -268,96 +268,96 @@ pip freeze > requirements/dev.txt
 pip freeze > requirements/prod.txt
 ```
 
-#### Migrations
+#### Миграции
 
-To migrate database:
+Для миграции базы данных:
 
 ```bash
 python manage.py migrate
 ```
 
-#### SuperUser
+#### Суперпользователь
 
-To create an admin user:
+Для создания пользователя администратора:
 
 ```bash
 python manage.py createsuperuser
 ```
 
-#### Run tests
+#### Запуск тестов
 
-To simply run all tests:
+Для простого запуска всех тестов:
 
 ```bash
 python manage.py test api
 ```
 
-To check test coverage, we use `coverage` package that highlights which part of the codebase are being tested:
+Для проверки покрытия тестами мы используем пакет `coverage`, который подсвечивает, какие части кодовой базы тестируются:
 
 ```bash
 coverage run --source="." manage.py test api
 coverage html
 ```
 
-#### Model diagram
+#### Диаграмма моделей
 
-To generate a models diagram, we use `django-extensions` package that includes a diagram generator for all the implemented models found in the project, to use:
+Для генерации диаграммы моделей мы используем пакет `django-extensions`, который включает генератор диаграмм для всех реализованных моделей, найденных в проекте:
 
 ```bash
 python manage.py graph_models -a -o models_diagram.png
 ```
 
-### Frontend (React + Vite)
+### Фронтенд (React + Vite)
 
-Vite provides automatic hot-reloading when frontend files are modified.
+Vite обеспечивает автоматическую горячую перезагрузку при изменении файлов фронтенда.
 
 > [!IMPORTANT]
-> Run the following commands _inside_ the container.
-> by running the following command:
+> Выполните следующие команды _внутри_ контейнера.
+> запустив следующую команду:
 >
 > ```bash
 > docker compose -f docker-compose.dev.yml --env-file .env.dev exec -it frontend sh
 > ```
 
-#### Dependencies
+#### Зависимости
 
-To install new dependencies, for either prod or dev:
+Для установки новых зависимостей, для продакшн или dev:
 
 ```bash
 npm install <package> --save-dev
 npm install <package>
 ```
 
-#### Run tests
+#### Запуск тестов
 
 [TODO]
 
-## Production Workflow
+## Продакшн рабочий процесс
 
-### Deployment
+### Развертывание
 
-The deployment process is **fully automated** via [GitHub Actions](https://github.com/features/actions). The CI/CD pipeline is triggered by every **Pull Request**:
+Процесс развертывания **полностью автоматизирован** через [GitHub Actions](https://github.com/features/actions). CI/CD пайплайн запускается каждым **Pull Request**:
 
-#### CI/CD Workflow Overview
+#### Обзор CI/CD процесса
 
 ```mermaid
 flowchart TD
     PR(🔀 Pull Request)
-    Tests{{🧪 Runs Tests}}
-    Passed([✅ Able to Merge])
-    Failed([❌ Cannot Merge])
-    Deployment(🚀 Runs Deployment)
+    Tests{{🧪 Запуск тестов}}
+    Passed([✅ Можно сливать])
+    Failed([❌ Нельзя сливать])
+    Deployment(🚀 Запуск развертывания)
     PR --> Tests
-    Tests -- Passed --> Passed
-    Tests -- Failed --> Failed
-    Passed -- Merge --> Deployment
+    Tests -- Пройдено --> Passed
+    Tests -- Провалено --> Failed
+    Passed -- Слияние --> Deployment
 ```
 
-1. **Build & Test:**  
-   All pull requests trigger automated builds and tests in a production-like Docker environment.
-2. **Merge & Deploy Automatically:**  
-   If tests pass, the pull request can be merged.  
-   Once merged, the code is automatically deployed to the server via SSH.
+1. **Сборка и тестирование:**  
+   Все pull request'ы запускают автоматические сборки и тесты в продакшн-подобной Docker среде.
+2. **Слияние и автоматическое развертывание:**  
+   Если тесты проходят, pull request может быть слит.  
+   После слияния код автоматически развертывается на сервере через SSH.
 
-- Environment variables are provided securely with GitHub Secrets.
-- Deployments use a custom `deploy.sh` script for zero downtime.
+- Переменные окружения предоставляются безопасно через GitHub Secrets.
+- Развертывания используют кастомный скрипт `deploy.sh` для нулевого времени простоя.
