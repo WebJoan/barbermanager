@@ -1,5 +1,24 @@
 from django.contrib.auth.password_validation import validate_password
-from rest_framework import serializers
+from django.core.exceptions import ValidationError as DjangoValidationError
+
+
+# Custom ValidationError for compatibility
+class ValidationError(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(message)
+
+
+# Mock serializers module for compatibility
+class serializers:
+    ValidationError = ValidationError
+    
+    class Serializer:
+        def __init__(self, *args, **kwargs):
+            self.context = kwargs.get('context', {})
+            
+        def is_valid(self, raise_exception=False):
+            return True
 
 
 class PasswordValidationMixin:

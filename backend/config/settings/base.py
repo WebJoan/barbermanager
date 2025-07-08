@@ -14,14 +14,13 @@ ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '').split()
 
 # Defined installed apps in use
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework_simplejwt.token_blacklist',
-    'rest_framework',
-    'drf_spectacular',
     'corsheaders',
     'api',
 ]
@@ -38,17 +37,8 @@ AUTHENTICATION_BACKENDS = [
 # Custom user model to be used
 AUTH_USER_MODEL = 'api.User'
 
-# Setting up default authentication to JWT token
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ),
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
-    ],
-    'EXCEPTION_HANDLER': 'api.backends.exceptions.customExceptionHandler',
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-}
+# ASGI application for async support
+ASGI_APPLICATION = 'config.asgi.application'
 
 # Setting up JWT token lifetime
 SIMPLE_JWT = {
@@ -87,8 +77,8 @@ TEMPLATES = [
     },
 ]
 
-# Development server location
-WSGI_APPLICATION = 'config.wsgi.application'
+# Development server location (deprecated, using ASGI instead)
+# WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database settings
 DATABASES = {
@@ -111,13 +101,14 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Internationalization
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = "Europe/Rome"
+LANGUAGE_CODE = 'ru-ru'
+TIME_ZONE = "Europe/Moscow"
 USE_I18N = True
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
+STATIC_ROOT = '/app/staticfiles'
 
 # User uploaded media dirs
 MEDIA_URL = '/media/'
@@ -142,7 +133,7 @@ CELERY_BEAT_SCHEDULE_FILENAME = '/tmp/celerybeat.schedule'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = "Europe/Rome"
+CELERY_TIMEZONE = "Europe/Moscow"
 CELERY_BEAT_SCHEDULE = {
     'complete-ongoing-appointments': {
         'task': 'api.tasks.complete_ongoing_appointments',
@@ -154,23 +145,11 @@ CELERY_BEAT_SCHEDULE = {
     },
 }
 
-SPECTACULAR_SETTINGS = {
+# Django Ninja API settings
+NINJA_API_SETTINGS = {
     "TITLE": "Barber Manager API",
     "DESCRIPTION": "Manage barbershop scheduling, reviews, and users.",
     "VERSION": "1.0.0",
-    "SWAGGER_UI_SETTINGS": '''{
-        deepLinking: true,
-        urls: [
-            {url: "/api/schema/", name: "v1"},
-        ],
-        presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
-        layout: "StandaloneLayout",
-    }''',
-
-    "SERVERS": [{"url": "/api"}],
-    # "SERVE_INCLUDE_SCHEMA": False,
-    "SCHEMA_PATH_PREFIX_TRIM": "/api",
-    'COMPONENT_SPLIT_REQUEST': True,
 }
 
 # WARNING: this is only for development

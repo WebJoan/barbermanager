@@ -3,7 +3,18 @@ import uuid
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import  force_str
 from django.contrib.auth.tokens import default_token_generator
-from rest_framework import serializers
+
+
+# Custom ValidationError for compatibility 
+class ValidationError(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(message)
+
+
+# Mock serializers module for compatibility
+class serializers:
+    ValidationError = ValidationError
 
 
 def get_profile_image_path(instance, filename):

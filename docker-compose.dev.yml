@@ -31,7 +31,8 @@ services:
     volumes:
       - ./backend:/app
       - media_data:/app/media
-    command: python manage.py runserver 0.0.0.0:8000
+      - static_data:/app/staticfiles
+    command: daphne -b 0.0.0.0 -p 8000 config.asgi:application
 
   celery:
     build:
@@ -73,3 +74,4 @@ services:
 volumes:
   postgres_data:
   media_data:
+  static_data:
