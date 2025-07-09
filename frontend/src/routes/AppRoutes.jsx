@@ -11,6 +11,7 @@ import RegisterBarber from '@pages/RegisterBarber/RegisterBarber';
 import VerifyEmail from '@pages/VerifyEmail/VerifyEmail';
 import RequestPasswordReset from '@pages/RequestPasswordReset/RequestPasswordReset';
 import Dashboard from '@pages/Dashboard/Dashboard';
+import Settings from '@pages/Settings/Settings';
 import NotFound from '@pages/NotFound/NotFound';
 import ConfirmPasswordReset from '@pages/ConfirmPasswordReset/ConfirmPasswordReset';
 
@@ -32,11 +33,11 @@ function AppRoutes() {
 
         {/* Shortcut redirects (from /:page to  /:role/:page) */}
         <Route path="dashboard" element={protectedRoute(<RoleRedirect />)} />
-        {/* <Route path="settings" element={protectedRoute(<RoleRedirect />)} /> */}
+        <Route path="settings" element={protectedRoute(<RoleRedirect />)} />
 
         {/* Role based pages */}
         <Route path=":role/dashboard" element={protectedRoute(<Dashboard />)} />
-        {/* <Route path=":role/settings" element={protectedRoute(<Settings />)} /> */}
+        <Route path=":role/settings" element={protectedRoute(<Settings />)} />
 
         {/* Unique role protected pages */}
         {/* <Route path="admin/barbers" element={protectedRoute(<div>hello</div>, 'ADMIN')} /> */}
